@@ -1,0 +1,53 @@
+Package: stass
+Title: Spatio-temporal Assessment Model
+Version: 0.0.0.9000
+Authors@R:
+    person("Ethan", "Lawler", , "lawlerem@dal.ca", role = c("aut", "cre"))
+Description: Uses spatio-temporal nearest neighbour Gaussian processes for fitting surplus production models
+License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
+    license
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.3
+Suggests:
+  knitr,
+  rmarkdown
+VignetteBuilder: knitr
+Depends:
+  R (>= 2.10),
+  sf
+LinkingTo:
+  Rcpp,
+  RcppEigen,
+  TMB
+Imports:
+  methods,
+  TMB (>= 1.7.16),
+  units,
+  Rcpp,
+  stars,
+  abind,
+  INLA
+LazyData: true
+Collate:
+    'RcppExports.R'
+    'classes.R'
+    'getset.R'
+    'generics.R'
+    'TMB_out.R'
+    'utility.R'
+    'dag.R'
+    'data.R'
+    'fit.R'
+    'long_stars.R'
+    'observation_parameters.R'
+    'process_parameters.R'
+    'process.R'
+    'observations.R'
+    'parameters.R'
+    'tracing.R'
+    'settings.R'
+    'stvonb.R'
+    'prepare.R'
+    'show.R'
+    'src.R'
