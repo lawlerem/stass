@@ -13,8 +13,10 @@ class conditional_normal {
     );
     conditional_normal() = default;
 
+    matrix<Type> convex_weights();
     // Interpolate marginal mean of conditional variables as weighted average of conditioning variables means
     vector<Type> interpolate_mean(const vector<Type>& mu);
+
 
     // Compute conditional mean
     vector<Type> conditional_mean(
@@ -61,23 +63,32 @@ conditional_normal<Type>::conditional_normal(
 
 
 template<class Type>
-vector<Type> conditional_normal<Type>::interpolate_mean(const vector<Type>& mu) {
-  vector<Type> mu_p(np);
-  vector<Type> mu_c = mu.segment(np, nc);
+matrix<Type> conditional_normal<Type>::convex_weights() {
+  matrix<Type> ans(np, nc);
 
-  vector<Type> num = vector<Type>(c_sigma_inv * mu_c.matrix());
+  matrix<Type> num = c_sigma_inv;
+  
   vector<Type> ones(nc);
   ones.setZero();
   ones = 1.0 + ones;
-
   vector<Type> denom = vector<Type>(c_sigma_inv * ones.matrix());
   for(int p = 0; p < np; p++) {
+    for(int c = 0; c < num.cols(); c++)
     if( denom(p) == 0 ) {
-      mu_p(p) = 0.0;
+      ans(p, c) = 0.0;
     } else {
-      mu_p(p) = num(p) / denom(p);
+      ans(p, c) = num(p, c) / denom(p);
     }
   }
+
+  return ans;
+}
+
+
+template<class Type>
+vector<Type> conditional_normal<Type>::interpolate_mean(const vector<Type>& mu) {
+  vector<Type> mu_c = mu.segment(np, nc);
+  vector<Type> mu_p = vector<convex_weights() * mu_c.matrix()>;
 
   vector<Type> new_mu(mu.size());
   new_mu << mu_p, mu_c;

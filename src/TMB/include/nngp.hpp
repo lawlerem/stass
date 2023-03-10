@@ -9,18 +9,20 @@ class nngp {
     tg_cache<Type> tg_c;
 
     Type pg_loglikelihood(time_series<Type>& ts);
-    nngp<Type> pg_simulate(time_series<Type>& ts);
+    // nngp<Type> pg_simulate(time_series<Type>& ts);
 
     void update_tg_mean();
     Type tg_loglikelihood(time_series<Type>& ts);
-    nngp<Type> tg_simulate(time_series<Type>& ts);
+    // nngp<Type> tg_simulate(time_series<Type>& ts);
+
+    array<Type> disaggregated_removals;
 
   public:
     nngp(
       persistent_graph<Type>& pg,
       transient_graph<Type>& tg,
       vector<covariance<Type> >& cv
-    ) : pg{pg}, tg{tg}, cv{cv}, pg_c{pg, cv}, tg_c{tg, pg, cv} {};
+    ) : pg{pg}, tg{tg}, cv{cv}, pg_c{pg, cv}, tg_c{tg, pg, cv}, disaggregated_removals{0.0 * pg.re} {};
 
     int dim_g(int t) { return pg.dim_g() + tg.dim_g(t); } // number of nodes in pg + number in tg(t)
     int dim_s(int t) { return pg.dim_s() + tg.dim_s(t); } // number of locs in pg + number in tg(t)
@@ -51,8 +53,10 @@ class nngp {
       );
     }
 
+    array<Type> disaggregate_removals(vector<Type>& removals, array<int>& idx);
+
     Type loglikelihood(time_series<Type>& ts) { return pg_loglikelihood(ts) + tg_loglikelihood(ts); }
-    nngp<Type> simulate(time_series<Type>& ts) { pg_simulate(ts); tg_simulate(ts); return *this; }
+    // nngp<Type> simulate(time_series<Type>& ts) { pg_simulate(ts); tg_simulate(ts); return *this; }
 
     Type prediction_loglikelihood(
       dag<Type>& pred_g,
@@ -69,7 +73,7 @@ class nngp {
 template<class Type>
 Type nngp<Type>::pg_loglikelihood(time_series<Type>& ts) {
   // Create marginal means for pg
-  pg.mean = ts.propagate_structure(pg.re);
+  pg.mean = ts.propagate_structure(pg.re, disaggregated_removals);
 
   // Use pg_cache to compute loglikelihood
   Type pg_ll = 0.0;
@@ -88,43 +92,43 @@ Type nngp<Type>::pg_loglikelihood(time_series<Type>& ts) {
 }
 
 
-template<class Type>
-nngp<Type> nngp<Type>::pg_simulate(time_series<Type>& ts) {
-  /*
-  for v in variables
-    for t in years
-      for node in pg.nodes
-        1.) Use ts.propagate_structure to update mean for year t in persistent graph
-        2.) Simulate random effects for node and year t
-        3.) Update random effects for year t in persistent graph
-  */
-  for(int v = 0; v < pg.dim_v(); v++) {
-    for(int t = 0; t < pg.dim_t(); t++) {
-      for(int node = 0; node < pg.dim_g(); node++) {
-        re_dag_node<Type> pg_node = pg(node);
-        vector<Type> to_mean = ts.propagate_structure(pg_node.re, t, v);
-        pg.set_mean_by_to_g(
-          to_mean.segment(0, pg_node.node.to.size()),
-          node,
-          t,
-          v
-        );
+// template<class Type>
+// nngp<Type> nngp<Type>::pg_simulate(time_series<Type>& ts) {
+//   /*
+//   for v in variables
+//     for t in years
+//       for node in pg.nodes
+//         1.) Use ts.propagate_structure to update mean for year t in persistent graph
+//         2.) Simulate random effects for node and year t
+//         3.) Update random effects for year t in persistent graph
+//   */
+//   for(int v = 0; v < pg.dim_v(); v++) {
+//     for(int t = 0; t < pg.dim_t(); t++) {
+//       for(int node = 0; node < pg.dim_g(); node++) {
+//         re_dag_node<Type> pg_node = pg(node);
+//         vector<Type> to_mean = ts.propagate_structure(pg_node.re, disaggregated_removals, t, v);
+//         pg.set_mean_by_to_g(
+//           to_mean.segment(0, pg_node.node.to.size()),
+//           node,
+//           t,
+//           v
+//         );
 
-        pg_node = pg(node, t, v);
-        // "to" nodes for pg_node.re won't be used
-        vector<Type> sim = pg_c(node, v).simulate(
-          (t == 0 ? 1.0 / ts.initial_sd_scale(v) : 1.0 ) * pg_node.re,
-          (t == 0 ? 1.0 / ts.initial_sd_scale(v) : 1.0 ) * pg_node.mean
-        );
-        sim.segment(0, pg_node.node.to.size()) = (t == 0 ? ts.initial_sd_scale(v) : 1.0) * sim.segment(0, pg_node.node.to.size());
+//         pg_node = pg(node, t, v);
+//         // "to" nodes for pg_node.re won't be used
+//         vector<Type> sim = pg_c(node, v).simulate(
+//           (t == 0 ? 1.0 / ts.initial_sd_scale(v) : 1.0 ) * pg_node.re,
+//           (t == 0 ? 1.0 / ts.initial_sd_scale(v) : 1.0 ) * pg_node.mean
+//         );
+//         sim.segment(0, pg_node.node.to.size()) = (t == 0 ? ts.initial_sd_scale(v) : 1.0) * sim.segment(0, pg_node.node.to.size());
 
-        pg.set_re_by_to_g(sim, node, t, v);
-      }
-    }
-  }
+//         pg.set_re_by_to_g(sim, node, t, v);
+//       }
+//     }
+//   }
 
-  return *this;
-}
+//   return *this;
+// }
 
 
 template<class Type>
@@ -158,34 +162,34 @@ Type nngp<Type>::tg_loglikelihood(time_series<Type>& ts) {
 }
 
 
-template<class Type>
-nngp<Type> nngp<Type>::tg_simulate(time_series<Type>& ts) {
-  /*
-  for v in variables
-    for t in years
-      for node in tg.nodes
-        1.) interpolate and store mean for tg
-          ---- DO NOT need to propagate mean
-        2.) simulate from conditional normal
-        3.) update random effects and mean in transient graph
-  */
-  update_tg_mean();
-  for(int v = 0; v < tg.dim_v(); v++) {
-    for(int t = 0; t < tg.dim_t(); t++) {
-      for(int node = 0; node < tg.dim_g(t); node++) {
-        re_dag_node<Type> tg_node = tg(node, t, v, pg);
-        vector<Type> sim = tg_c(node, t, v).simulate(
-          (t == 0 ? 1.0 / ts.initial_sd_scale(v) : 1.0 ) * tg_node.re,
-          (t == 0 ? 1.0 / ts.initial_sd_scale(v) : 1.0 ) * tg_node.mean
-        );
+// template<class Type>
+// nngp<Type> nngp<Type>::tg_simulate(time_series<Type>& ts) {
+//   /*
+//   for v in variables
+//     for t in years
+//       for node in tg.nodes
+//         1.) interpolate and store mean for tg
+//           ---- DO NOT need to propagate mean
+//         2.) simulate from conditional normal
+//         3.) update random effects and mean in transient graph
+//   */
+//   update_tg_mean();
+//   for(int v = 0; v < tg.dim_v(); v++) {
+//     for(int t = 0; t < tg.dim_t(); t++) {
+//       for(int node = 0; node < tg.dim_g(t); node++) {
+//         re_dag_node<Type> tg_node = tg(node, t, v, pg);
+//         vector<Type> sim = tg_c(node, t, v).simulate(
+//           (t == 0 ? 1.0 / ts.initial_sd_scale(v) : 1.0 ) * tg_node.re,
+//           (t == 0 ? 1.0 / ts.initial_sd_scale(v) : 1.0 ) * tg_node.mean
+//         );
 
-        tg.set_re_by_to_g(sim, node, t, v, pg);
-      }
-    }
-  }
+//         tg.set_re_by_to_g(sim, node, t, v, pg);
+//       }
+//     }
+//   }
 
-  return *this;
-}
+//   return *this;
+// }
 
 
 template<class Type>
@@ -239,4 +243,26 @@ Type nngp<Type>::prediction_loglikelihood(
   }
 
   return pred_ll;
+}
+
+
+template<class Type>
+array<Type> nngp<Type>::disaggregate_removals(vector<Type>& removals, array<int>& idx) {
+  disaggregated_removals = 0.0 * disaggregated_removals;
+
+  for(int i = 0; i < removals.size(); i++) {
+    if( idx(i, 0) < pg.dim_s() ) {
+      // Associated node is in persistent graph
+      disaggregated_removals(idx(i, 0), idx(i, 1)) += removals(i);
+    } else {
+      // Associated node is in transient graph, distribute catch among parents 
+      // nodes in persistent graph
+      vector<int> parents = tg(idx(i, 0) - pg.dim(s), idx(i, 1), pg).node.from;
+      vector<Type> this_removal = vector<Type>(tg_cache(idx(i, 0), idx(i, 1), 0).convex_weights() * removals(i));
+      for(int j = 0; j < this_removal.size(); j++) {
+        disaggregated_removals(parents(j), idx(i, 1)) += this_removal(j);
+      }
+    }
+  }
+  return disaggregated_removals;
 }

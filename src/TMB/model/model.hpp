@@ -15,20 +15,23 @@ Type stass_model(objective_function<Type>* obj) {
   array<Type> ts_pars = working_ts_pars;
   for(int v = 0; v < ts_pars.dim(1); v++) {
     ts_pars(0, v) = working_ts_pars(0, v); // mean, no transformation
-    ts_pars(1, v) = 2 * invlogit(working_ts_pars(1, v)) - 1; // ar1, --> (-1,1)
-    ts_pars(2, v) = exp(working_ts_pars(2, v)); // marginal sd, --> (0,Inf)
+    ts_pars(1, v) = exp(working_ts_pars(1, v)); // marginal sd, --> (0,Inf)
+    ts_pars(2, v) = exp(working_ts_pars(2, v)); // chi, --> (0, Inf)
+    ts_pars(3, v) = exp(working_ts_pars(3, v)); // alpha, --> (0, Inf)
   }
   REPORT(ts_pars);
   ADREPORT(ts_pars);
 
-  time_series<Type> ts {ts_re, ts_pars};
+  DATA_VECTOR(ts_removals);
+
+  time_series<Type> ts {ts_re, ts_pars, ts_removals};
   nll -= ts.loglikelihood();
-  SIMULATE{
-    if( !conditional_sim ) {
-      ts_re = ts.simulate().get_re();
-    }
-    REPORT(ts_re);
-  }
+  // SIMULATE{
+  //   if( !conditional_sim ) {
+  //     ts_re = ts.simulate().get_re();
+  //   }
+  //   REPORT(ts_re);
+  // }
   /*
   End of temporal component
   */
@@ -96,17 +99,21 @@ Type stass_model(objective_function<Type>* obj) {
   }
 
   // Spatio-temporal component
+  DATA_VECTOR(removals); // [idx, removals]
+  DATA_IARRAY(idx); // [idx, (graph node, time)]
+
   nngp<Type> process {pg, tg, cv};
+  process.disaggregate_removals(removals, idx);
   nll -= process.loglikelihood(ts);
-  SIMULATE{
-    if( !conditional_sim ) {
-      process.simulate(ts);
-      pg_re = process.get_pg_re();
-      tg_re = process.get_tg_re();
-    }
-    REPORT(pg_re);
-    REPORT(tg_re);
-  }
+  // SIMULATE{
+  //   if( !conditional_sim ) {
+  //     process.simulate(ts);
+  //     pg_re = process.get_pg_re();
+  //     tg_re = process.get_tg_re();
+  //   }
+  //   REPORT(pg_re);
+  //   REPORT(tg_re);
+  // }
   /*
   End of spatio-temporal component
   */
@@ -116,24 +123,24 @@ Type stass_model(objective_function<Type>* obj) {
   /*
   Start of observation component
   */
-  DATA_ARRAY(length); // [idx, length]
-  DATA_ARRAY(age); // [idx, age]
-  DATA_IARRAY(idx); // [idx, (graph node, time)]
+  DATA_VECTOR(effort)
   DATA_MATRIX(mean_design); // [idx, covar]
   PARAMETER_ARRAY(beta); // [covar, var]
   PARAMETER_ARRAY(working_response_pars); // [par,var], columns may have trailing NA
   array<Type> response_pars = working_response_pars;
   response_pars(0, 0) = exp(working_response_pars(0, 0));
+  response_pars(1, 0) = exp(working_response_pars(1, 0));
+  response_pars(0, 1) = exp(working_response_pars(0, 1));
   REPORT(response_pars);
   ADREPORT(response_pars);
 
-  vonBertalanffy<Type> vonB {length, age, idx, mean_design, beta, response_pars(0, 0)};
-  nll -= vonB.loglikelihood(process);
-  SIMULATE{
-    vonB.simulate(process);
-    length = vonB.l;
-    REPORT(length);
-  }
+  observations<Type> obs {removals, effort, idx, response_pars};
+  nll -= obs.loglikelihood(process);
+  // SIMULATE{
+  //   obs.simulate(process);
+  //   length = vonB.l;
+  //   REPORT(length);
+  // }
   /*
   End of observation component
   */

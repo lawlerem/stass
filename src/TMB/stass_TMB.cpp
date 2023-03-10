@@ -15,15 +15,12 @@ using namespace density;
 #include "include/vonBertalanffy.hpp"
 
 #include "model/model.hpp"
-#include "model/length_at_age.hpp"
 
 template<class Type>
 Type objective_function<Type>::operator() () {
   DATA_STRING(model);
   if( model == "model" ) {
     return stass_model(this);
-  } else if( model == "length_at_age" ) {
-    return length_at_age(this);
   } else {
     error("Unknown model.");
   }
