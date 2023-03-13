@@ -7,7 +7,7 @@
 \alias{formula<-,settings-method}
 \alias{distance_units,settings-method}
 \alias{distance_units<-,settings-method}
-\title{An S4 class to hold settings for a stvonb model}
+\title{An S4 class to hold settings for a stass model}
 \usage{
 \S4method{formula}{settings}(x)
 
@@ -23,7 +23,7 @@
 \item{value}{A replacement value}
 }
 \description{
-An S4 class to hold settings for a stvonb model
+An S4 class to hold settings for a stass model
 }
 \section{Functions}{
 \itemize{
@@ -46,7 +46,7 @@ compatible with units::set_units.}
 }}
 
 \seealso{
-Other stvonb_classes: 
+Other stass_classes: 
 \code{\link{TMB_out-class}},
 \code{\link{dag-class}},
 \code{\link{long_stars-class}},
@@ -55,8 +55,8 @@ Other stvonb_classes:
 \code{\link{parameters-class}},
 \code{\link{process-class}},
 \code{\link{process_parameters-class}},
-\code{\link{stvonb-class}},
+\code{\link{stass-class}},
 \code{\link{tracing-class}}
 }
-\concept{stvonb_classes}
+\concept{stass_classes}
 \keyword{internal}

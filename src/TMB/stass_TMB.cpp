@@ -12,7 +12,7 @@ using namespace density;
 #include "include/transient_graph.hpp"
 #include "include/tg_cache.hpp"
 #include "include/nngp.hpp"
-#include "include/vonBertalanffy.hpp"
+#include "include/observations.hpp"
 
 #include "model/model.hpp"
 

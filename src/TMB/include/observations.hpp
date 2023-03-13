@@ -16,22 +16,22 @@ class observations {
     removals{removals},
     effort{effort},
     idx{idx},
-    response_pars{response_pars};
+    response_pars{response_pars} {};
 
     Type loglikelihood(nngp<Type>& process) {
       Type ans = 0.0;
-      for(int i = 0; i < catch.size(); i++) {
-        Type pred_catch = response_pars(0, 0) * 
+      for(int i = 0; i < removals.size(); i++) {
+        Type pred_removals = response_pars(0, 0) * 
           exp(process(idx(i, 0), idx(i, 1), 1)) *
           process(idx(i, 0), idx(i, 1), 0);
         // Log-normal distribution
         ans += dnorm(
-          log( catch(i) / pred_catch),
+          log( removals(i) / pred_removals),
           Type(0.0),
           response_pars(1, 0),
           true
         );
-        ans -= log( catch(i) / pred_catch);
+        ans -= log( removals(i) / pred_removals);
 
         ans += dnorm(
           effort(i),

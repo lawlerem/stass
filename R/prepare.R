@@ -206,7 +206,7 @@ stass_prepare_process<- function(
         return = "column"),
       geom = sf::st_geometry(data)
     ),
-    var_names = c("max", "rate")
+    var_names = c("biomass", "effort", "suitability")
   )
   names(values(tg_re(process)))[[2]]<- "se"
   values(tg_re(process))$w[]<- 1
@@ -231,13 +231,13 @@ stass_prepare_process<- function(
       space_parameters(parameters)[[i]]["nu", "fixed"]<- TRUE
     } else {}
   }
-  names(space_parameters(parameters))<- c("max", "rate")
+  names(space_parameters(parameters))<- c("biomass", "effort", "suitability")
 
   time_parameters(parameters)<- list(
     biomass = data.frame(
       par = c(0, 0),
       se = c(0, 0),
-      fixed = c(FALSE, FALSE)
+      fixed = c(FALSE, FALSE),
       row.names = c("mu", "sd")
     ),
     effort = data.frame(
@@ -317,7 +317,7 @@ stass_prepare_observations<- function(
       ))
     }
   )
-  names(fixed_effects(parameters))<- c("biomass", "effort", "rate")
+  names(fixed_effects(parameters))<- c("biomass", "effort", "suitability")
   parameters(observations)<- parameters
 
   return(observations)

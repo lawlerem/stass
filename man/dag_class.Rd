@@ -65,7 +65,7 @@ compatible with units::set_units.}
 \seealso{
 construct_graph Functions used to create graphs.
 
-Other stvonb_classes: 
+Other stass_classes: 
 \code{\link{TMB_out-class}},
 \code{\link{long_stars-class}},
 \code{\link{observation_parameters-class}},
@@ -74,7 +74,7 @@ Other stvonb_classes:
 \code{\link{process-class}},
 \code{\link{process_parameters-class}},
 \code{\link{settings-class}},
-\code{\link{stvonb-class}},
+\code{\link{stass-class}},
 \code{\link{tracing-class}}
 }
-\concept{stvonb_classes}
+\concept{stass_classes}

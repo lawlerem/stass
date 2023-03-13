@@ -8,9 +8,9 @@
 An S4 class to collect process and observations parameters.
 }
 \seealso{
-process_parameters_class, observation_parameters_class, stvonb_class
+process_parameters_class, observation_parameters_class, stass_class
 
-Other stvonb_classes: 
+Other stass_classes: 
 \code{\link{TMB_out-class}},
 \code{\link{dag-class}},
 \code{\link{long_stars-class}},
@@ -19,8 +19,8 @@ Other stvonb_classes:
 \code{\link{process-class}},
 \code{\link{process_parameters-class}},
 \code{\link{settings-class}},
-\code{\link{stvonb-class}},
+\code{\link{stass-class}},
 \code{\link{tracing-class}}
 }
-\concept{stvonb_classes}
+\concept{stass_classes}
 \keyword{internal}

@@ -170,7 +170,7 @@ setClass(
 setClass(
   Class = "observation_parameters",
   slots = c(
-    response_parameters = "data.frame",
+    response_parameters = "list",
     fixed_effects = "list"
   )
 )

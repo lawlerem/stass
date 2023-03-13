@@ -10,7 +10,7 @@
 \alias{parameter_covariance,tracing-method}
 \alias{timing,tracing-method}
 \alias{show,tracing-method}
-\title{An S4 class to hold optimization tracing for a stvonb model}
+\title{An S4 class to hold optimization tracing for a stass model}
 \usage{
 \S4method{opt_time}{tracing}(x)
 
@@ -32,7 +32,7 @@
 \item{object}{An object}
 }
 \description{
-An S4 class to hold optimization tracing for a stvonb model
+An S4 class to hold optimization tracing for a stass model
 }
 \section{Functions}{
 \itemize{
@@ -70,7 +70,7 @@ errors.}
 }}
 
 \seealso{
-Other stvonb_classes: 
+Other stass_classes: 
 \code{\link{TMB_out-class}},
 \code{\link{dag-class}},
 \code{\link{long_stars-class}},
@@ -80,6 +80,6 @@ Other stvonb_classes:
 \code{\link{process-class}},
 \code{\link{process_parameters-class}},
 \code{\link{settings-class}},
-\code{\link{stvonb-class}}
+\code{\link{stass-class}}
 }
-\concept{stvonb_classes}
+\concept{stass_classes}

@@ -22,8 +22,8 @@ setMethod(
     .Object,
     time_effects = stars::st_as_stars(
       list(
-        w = array(0, dim = c(1, 1)),
-        se = array(0, dim = c(1, 1))
+        w = array(0, dim = c(1, 3)),
+        se = array(0, dim = c(1, 3))
       ),
       dimensions = stars::st_dimensions(
         time = 0,
@@ -32,8 +32,8 @@ setMethod(
     ),
     pg_re = stars::st_as_stars(
       list(
-        w = array(0, dim = c(1, 1, 1)),
-        se = array(0, dim = c(1, 1, 1))
+        w = array(0, dim = c(1, 1, 3)),
+        se = array(0, dim = c(1, 1, 3))
       ),
       dimensions = stars::st_dimensions(
         geom = sf::st_sfc(sf::st_point(c(0, 0))),

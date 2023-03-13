@@ -47,7 +47,7 @@ Collate:
     'parameters.R'
     'tracing.R'
     'settings.R'
-    'stvonb.R'
+    'stass.R'
     'prepare.R'
     'show.R'
     'src.R'

@@ -719,6 +719,16 @@ setMethod(
   data<- list(
     model = "model",
     conditional_sim = FALSE,
+    ts_removals = c(
+      by(
+        c(response_from_formula(formula(x), dat(x))),
+        factor(
+          c(time_from_formula(formula(x), dat(x))),
+          levels = stars::st_get_dimension_values(time_effects(foo), time_name(x))
+        ),
+        function(x) sum(x)
+      )
+    ),
     pg_edges = edges(convert_idxR_to_C(persistent_graph(x))),
     pg_dists = distances(persistent_graph(x)),
     tg_t = c( # Remove attributes
@@ -727,14 +737,14 @@ setMethod(
     tg_edges = edges(convert_idxR_to_C(transient_graph(x))),
     tg_dists = distances(transient_graph(x)),
     cv_code = covariance_to_code(covariance_function(x)),
-    length = as.matrix(response_from_formula(formula(x), dat(x))),
-    age = as.matrix(age_from_formula(formula(x), dat(x))),
+    removals = c(as.matrix(response_from_formula(formula(x), dat(x)))),
     idx = cbind(
       dat(x)$graph_idx - 1,
       c(
         time_from_formula(formula(x), dat(x)) - min_t
       )
     ),
+    effort = c(as.matrix(effort_from_formula(formula(x), dat(x)))),
     mean_design = as.matrix(
       mean_design_from_formula(
         formula(x),
@@ -746,8 +756,9 @@ setMethod(
     pred_dists = vector(mode= "list", length = 0),
     pred_t = integer(0)
   )
+  data$ts_removals[is.na(data$ts_removals)]<- 0
 
-  vars<- c("max", "rate")
+  vars<- c("biomass", "effort", "suitability")
   bounds_check<- function(x, min, max) {
     par<- x[, "par"]
     fixed<- x[, "fixed"]
@@ -758,17 +769,41 @@ setMethod(
     working_ts_pars = do.call(
       cbind_no_recycle,
       lapply(vars, function(v) {
-        c(
-          time_parameters(x)[[v]]["mu", "par"],
-          ifelse( # -1 < ar1 < +1
-            bounds_check(time_parameters(x)[[v]]["ar1", ], -1, 1),
-            qlogis(0.5 * (1 + time_parameters(x)[[v]]["ar1", "par"])),
-            qlogis(0.5 * (1 + 0))
+        par_df<- time_parameters(x)[[v]]
+        switch(v,
+          biomass = c(
+            par_df["mu", "par"],
+            ifelse( # sd > 0
+              bounds_check(par_df["sd", ], 0, Inf),
+              log(par_df["sd", "par"]),
+              log(1)
+            )
           ),
-          ifelse( # sd > 0
-            bounds_check(time_parameters(x)[[v]]["sd", ], 0, Inf),
-            log(time_parameters(x)[[v]]["sd","par"]),
-            log(1)
+          effort = c(
+            par_df["mu", "par"],
+            ifelse( # sd > 0
+              bounds_check(par_df["sd", ], 0, Inf),
+              log(par_df["sd", "par"]),
+              log(1)
+            ),
+            ifelse( # chi > 0
+              bounds_check(par_df["chi", ], 0, Inf),
+              log(par_df["chi", "par"]),
+              log(1)
+            ),
+            ifelse( # alpha > 0
+              bounds_check(par_df["alpha", ], 0, Inf),
+              log(par_df["alpha", "par"]),
+              log(1)
+            )
+          ),
+          suitability = c(
+            par_df["mu", "par"],
+            ifelse( # sd > 0
+              bounds_check(par_df["sd", ], 0, Inf),
+              log(par_df["sd", "par"]),
+              log(1)
+            )
           )
         )
       })
@@ -815,12 +850,30 @@ setMethod(
         fixed_effects(x)[[v]][colnames(data$mean_design), "par"]
       })
     ),
-    working_response_pars = matrix(
-      ifelse(
-        bounds_check(response_parameters(x)["sd", ], 0, Inf),
-        log(response_parameters(x)["sd", "par"]),
-        log(1)
-      )
+    working_response_pars = do.call(
+      cbind_no_recycle,
+      lapply(c("removals", "effort"), function(v) {
+        par_df<- response_parameters(x)[[v]]
+        switch(v,
+          removals = c(
+            ifelse( # catchability
+              bounds_check(par_df["catchability", ], 0, 1),
+              qlogis(par_df["catchability", "par"]),
+              qlogis(0.5)
+            ),
+            ifelse( # sd
+              bounds_check(par_df["sd", ], 0, Inf),
+              log(par_df["sd", "par"]),
+              log(1)
+            )
+          ),
+          effort = ifelse(
+            bounds_check(par_df["sd", ], 0, Inf),
+            log(par_df["sd", "par"]),
+            log(1)
+          )
+        )
+      })
     ),
     pred_re = array(0, dim = c(0, length(vars)))
   )
@@ -843,7 +896,12 @@ setMethod(
         space_parameters(x)[[v]][, "fixed"]
       })
     ),
-    working_response_pars = response_parameters(x)[, "fixed"],
+    working_response_pars = do.call(
+      cbind_no_recycle,
+      lapply(c("removals", "effort"), function(v) {
+        response_parameters(x)[[v]][, "fixed"]
+      })
+    ),
     beta = do.call(
       cbind_no_recycle,
       lapply(vars, function(v) {

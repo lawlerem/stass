@@ -2,26 +2,26 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 order_d_matrix <- function(d) {
-    .Call(`_stvonb_order_d_matrix`, d)
+    .Call(`_stass_order_d_matrix`, d)
 }
 
 order_adjacency_matrix <- function(m) {
-    .Call(`_stvonb_order_adjacency_matrix`, m)
+    .Call(`_stass_order_adjacency_matrix`, m)
 }
 
 lowest_k <- function(d, k) {
-    .Call(`_stvonb_lowest_k`, d, k)
+    .Call(`_stass_lowest_k`, d, k)
 }
 
 dist_to_dag <- function(d, n_neighbours) {
-    .Call(`_stvonb_dist_to_dag`, d, n_neighbours)
+    .Call(`_stass_dist_to_dag`, d, n_neighbours)
 }
 
 dist_to_tg_dag <- function(d, pg_d, n_neighbours) {
-    .Call(`_stvonb_dist_to_tg_dag`, d, pg_d, n_neighbours)
+    .Call(`_stass_dist_to_tg_dag`, d, pg_d, n_neighbours)
 }
 
 dist_to_pred_dag <- function(d, g_d, node_alignment, n_neighbours) {
-    .Call(`_stvonb_dist_to_pred_dag`, d, g_d, node_alignment, n_neighbours)
+    .Call(`_stass_dist_to_pred_dag`, d, g_d, node_alignment, n_neighbours)
 }
 

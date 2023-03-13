@@ -88,7 +88,7 @@ matrix<Type> conditional_normal<Type>::convex_weights() {
 template<class Type>
 vector<Type> conditional_normal<Type>::interpolate_mean(const vector<Type>& mu) {
   vector<Type> mu_c = mu.segment(np, nc);
-  vector<Type> mu_p = vector<convex_weights() * mu_c.matrix()>;
+  vector<Type> mu_p = vector<Type>(convex_weights() * mu_c.matrix());
 
   vector<Type> new_mu(mu.size());
   new_mu << mu_p, mu_c;

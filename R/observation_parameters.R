@@ -16,11 +16,19 @@ setMethod(
     signature = "observation_parameters",
     definition = function(
       .Object,
-      response_parameters = data.frame(
-        par = numeric(2),
-        se = numeric(2),
-        fixed = logical(2),
-        row.names = c("catchability", "sd")
+      response_parameters = list(
+        removals = data.frame(
+          par = numeric(2),
+          se = numeric(2),
+          fixed = logical(2),
+          row.names = c("catchability", "sd")
+        ),
+        effort = data.frame(
+          par = numeric(1),
+          se = numeric(1),
+          fixed = logical(1),
+          row.names = c("sd")
+        )
       ),
       fixed_effects = list(
         biomass = data.frame(
@@ -36,7 +44,7 @@ setMethod(
         suitability = data.frame(
           par = numeric(0),
           se = numeric(0),
-          fixed = numieric(0)
+          fixed = numeric(0)
         )
       )) {
   response_parameters(.Object)<- response_parameters

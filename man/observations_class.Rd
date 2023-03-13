@@ -9,7 +9,7 @@
 \alias{data_predictions<-,observations-method}
 \alias{parameters,observations-method}
 \alias{parameters<-,observations,ANY-method}
-\title{An S4 class to hold the observation information for a stvonb model.}
+\title{An S4 class to hold the observation information for a stass model.}
 \usage{
 \S4method{dat}{observations}(x)
 
@@ -29,7 +29,7 @@
 \item{value}{A replacement value}
 }
 \description{
-An S4 class to hold the observation information for a stvonb model.
+An S4 class to hold the observation information for a stass model.
 }
 \section{Functions}{
 \itemize{
@@ -64,9 +64,9 @@ the process.}
 }}
 
 \seealso{
-stvonb_prepare
+stass_prepare
 
-Other stvonb_classes: 
+Other stass_classes: 
 \code{\link{TMB_out-class}},
 \code{\link{dag-class}},
 \code{\link{long_stars-class}},
@@ -75,8 +75,8 @@ Other stvonb_classes:
 \code{\link{process-class}},
 \code{\link{process_parameters-class}},
 \code{\link{settings-class}},
-\code{\link{stvonb-class}},
+\code{\link{stass-class}},
 \code{\link{tracing-class}}
 }
-\concept{stvonb_classes}
+\concept{stass_classes}
 \keyword{internal}

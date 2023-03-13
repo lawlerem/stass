@@ -205,8 +205,8 @@ covariance_from_formula<- function(x) {
 
     return(
       list(
-        covariance = rep(covar, length.out = 2),
-        nu = rep(as.numeric(nu), length.out = 2)
+        covariance = rep(covar, length.out = 3),
+        nu = rep(as.numeric(nu), length.out = 3)
       )
     )
   }
@@ -217,8 +217,8 @@ covariance_from_formula<- function(x) {
   if( length(the_idx) == 0 ) {
     return(
       list(
-        covariance = rep("exponential", 2),
-        nu = rep(0.5, 2)
+        covariance = rep("exponential", 3),
+        nu = rep(0.5, 3)
       )
     )
   } else if( length(the_idx) > 1 ) {

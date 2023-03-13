@@ -9,7 +9,7 @@
 \alias{space_parameters<-,process_parameters-method}
 \alias{time_parameters,process_parameters-method}
 \alias{time_parameters<-,process_parameters-method}
-\title{An S4 class to hold process parameters for a stvonb model.}
+\title{An S4 class to hold process parameters for a stass model.}
 \usage{
 \S4method{covariance_function}{process_parameters}(x)
 
@@ -29,14 +29,14 @@
 \item{value}{A replacement value}
 }
 \description{
-An S4 class to hold process parameters for a stvonb model.
+An S4 class to hold process parameters for a stass model.
 }
 \section{Functions}{
 \itemize{
 \item \code{covariance_function(process_parameters)}: Get covariance function(s)
 
 \item \code{covariance_function(process_parameters) <- value}: Set covariance function(s). Run
-get_stvonb_distributions("covariance") for valid covariance functions.
+get_stass_distributions("covariance") for valid covariance functions.
 Setting the covariance function also overwrites the spatial parameters.
 
 \item \code{space_parameters(process_parameters)}: Get spatial parameters
@@ -52,7 +52,7 @@ Setting the covariance function also overwrites the spatial parameters.
 
 \describe{
 \item{\code{covariance_function}}{The covariance function, must be one from
-get_stvonb_distributions("covariance").}
+get_stass_distributions("covariance").}
 
 \item{\code{space_parameters}}{A list containing spatial parameters for each spatio-temporally varying growth parameter.
 variable.}
@@ -62,7 +62,7 @@ variable.}
 }}
 
 \seealso{
-Other stvonb_classes: 
+Other stass_classes: 
 \code{\link{TMB_out-class}},
 \code{\link{dag-class}},
 \code{\link{long_stars-class}},
@@ -71,8 +71,8 @@ Other stvonb_classes:
 \code{\link{parameters-class}},
 \code{\link{process-class}},
 \code{\link{settings-class}},
-\code{\link{stvonb-class}},
+\code{\link{stass-class}},
 \code{\link{tracing-class}}
 }
-\concept{stvonb_classes}
+\concept{stass_classes}
 \keyword{internal}

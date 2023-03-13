@@ -22,7 +22,9 @@ class nngp {
       persistent_graph<Type>& pg,
       transient_graph<Type>& tg,
       vector<covariance<Type> >& cv
-    ) : pg{pg}, tg{tg}, cv{cv}, pg_c{pg, cv}, tg_c{tg, pg, cv}, disaggregated_removals{0.0 * pg.re} {};
+    ) : pg{pg}, tg{tg}, cv{cv}, pg_c{pg, cv}, tg_c{tg, pg, cv}, disaggregated_removals{pg.re} {
+      disaggregated_removals = 0.0 * disaggregated_removals;
+    };
 
     int dim_g(int t) { return pg.dim_g() + tg.dim_g(t); } // number of nodes in pg + number in tg(t)
     int dim_s(int t) { return pg.dim_s() + tg.dim_s(t); } // number of locs in pg + number in tg(t)
@@ -257,8 +259,8 @@ array<Type> nngp<Type>::disaggregate_removals(vector<Type>& removals, array<int>
     } else {
       // Associated node is in transient graph, distribute catch among parents 
       // nodes in persistent graph
-      vector<int> parents = tg(idx(i, 0) - pg.dim(s), idx(i, 1), pg).node.from;
-      vector<Type> this_removal = vector<Type>(tg_cache(idx(i, 0), idx(i, 1), 0).convex_weights() * removals(i));
+      vector<int> parents = tg(idx(i, 0) - pg.dim_s(), idx(i, 1), pg).node.from;
+      vector<Type> this_removal = vector<Type>(tg_c(idx(i, 0), idx(i, 1), 0).convex_weights() * removals(i));
       for(int j = 0; j < this_removal.size(); j++) {
         disaggregated_removals(parents(j), idx(i, 1)) += this_removal(j);
       }

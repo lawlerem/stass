@@ -13,7 +13,7 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 
 // order_d_matrix
 Eigen::VectorXi order_d_matrix(Eigen::MatrixXd& d);
-RcppExport SEXP _stvonb_order_d_matrix(SEXP dSEXP) {
+RcppExport SEXP _stass_order_d_matrix(SEXP dSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -24,7 +24,7 @@ END_RCPP
 }
 // order_adjacency_matrix
 Eigen::VectorXi order_adjacency_matrix(Eigen::MatrixXi& m);
-RcppExport SEXP _stvonb_order_adjacency_matrix(SEXP mSEXP) {
+RcppExport SEXP _stass_order_adjacency_matrix(SEXP mSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -35,7 +35,7 @@ END_RCPP
 }
 // lowest_k
 Eigen::VectorXi lowest_k(const Eigen::VectorXd& d, const int k);
-RcppExport SEXP _stvonb_lowest_k(SEXP dSEXP, SEXP kSEXP) {
+RcppExport SEXP _stass_lowest_k(SEXP dSEXP, SEXP kSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -47,7 +47,7 @@ END_RCPP
 }
 // dist_to_dag
 SEXP dist_to_dag(const Eigen::Map<Eigen::MatrixXd>& d, const int n_neighbours);
-RcppExport SEXP _stvonb_dist_to_dag(SEXP dSEXP, SEXP n_neighboursSEXP) {
+RcppExport SEXP _stass_dist_to_dag(SEXP dSEXP, SEXP n_neighboursSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -59,7 +59,7 @@ END_RCPP
 }
 // dist_to_tg_dag
 SEXP dist_to_tg_dag(const Eigen::Map<Eigen::MatrixXd>& d, const Eigen::Map<Eigen::MatrixXd>& pg_d, const int n_neighbours);
-RcppExport SEXP _stvonb_dist_to_tg_dag(SEXP dSEXP, SEXP pg_dSEXP, SEXP n_neighboursSEXP) {
+RcppExport SEXP _stass_dist_to_tg_dag(SEXP dSEXP, SEXP pg_dSEXP, SEXP n_neighboursSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -72,7 +72,7 @@ END_RCPP
 }
 // dist_to_pred_dag
 SEXP dist_to_pred_dag(const Eigen::Map<Eigen::MatrixXd>& d, const Eigen::Map<Eigen::MatrixXd>& g_d, const Eigen::MatrixXi& node_alignment, const int n_neighbours);
-RcppExport SEXP _stvonb_dist_to_pred_dag(SEXP dSEXP, SEXP g_dSEXP, SEXP node_alignmentSEXP, SEXP n_neighboursSEXP) {
+RcppExport SEXP _stass_dist_to_pred_dag(SEXP dSEXP, SEXP g_dSEXP, SEXP node_alignmentSEXP, SEXP n_neighboursSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -86,16 +86,16 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_stvonb_order_d_matrix", (DL_FUNC) &_stvonb_order_d_matrix, 1},
-    {"_stvonb_order_adjacency_matrix", (DL_FUNC) &_stvonb_order_adjacency_matrix, 1},
-    {"_stvonb_lowest_k", (DL_FUNC) &_stvonb_lowest_k, 2},
-    {"_stvonb_dist_to_dag", (DL_FUNC) &_stvonb_dist_to_dag, 2},
-    {"_stvonb_dist_to_tg_dag", (DL_FUNC) &_stvonb_dist_to_tg_dag, 3},
-    {"_stvonb_dist_to_pred_dag", (DL_FUNC) &_stvonb_dist_to_pred_dag, 4},
+    {"_stass_order_d_matrix", (DL_FUNC) &_stass_order_d_matrix, 1},
+    {"_stass_order_adjacency_matrix", (DL_FUNC) &_stass_order_adjacency_matrix, 1},
+    {"_stass_lowest_k", (DL_FUNC) &_stass_lowest_k, 2},
+    {"_stass_dist_to_dag", (DL_FUNC) &_stass_dist_to_dag, 2},
+    {"_stass_dist_to_tg_dag", (DL_FUNC) &_stass_dist_to_tg_dag, 3},
+    {"_stass_dist_to_pred_dag", (DL_FUNC) &_stass_dist_to_pred_dag, 4},
     {NULL, NULL, 0}
 };
 
-RcppExport void R_init_stvonb(DllInfo *dll) {
+RcppExport void R_init_stass(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
 }
